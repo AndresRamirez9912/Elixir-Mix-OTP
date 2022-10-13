@@ -1,5 +1,3 @@
-
-
 # Agent
 
 Agents are a piece of memory that contains states or list/elements
@@ -80,4 +78,91 @@ When my supervisor launches process I can write the especificationf of each proc
 ```elixir
 result = child1.child_spec([:ok]) 
 #result = {id: KV.Registry, start: {KV.Registry, :start_link, [[:ok]]}}
+```
+
+# Dynamic Supervisor
+
+When I’m creating my Supervisor sometimes the child list it’s not complete, on fly can born new childs, to handle this I can create a dynamic supervisto that is a normal supervisor but that can supervise a new process, to add a new chile I can use the following function
+
+```elixir
+{:ok, pid} = DynamicSupervisor.start_child(old_supervisor, new_Child)
+```
+
+Notice that in this case, the Dynamic supervisor con only handle the *strategy: :one_for_one*
+
+# ETS
+
+ETS (Erlang Term Storage) is an engine build in OTP to storage data into process and tables. I mean each process is a table
+
+## Types of tables
+
+- **set:** Default table one value per key
+- **ordered_set:** similar as set table but the elements are ordered by Earlang
+- **bag:** Many Objects per key ****
+- **duplicate_bag:** Many Objects per key and allow has duplicates
+
+## Access Control
+
+- **public** Read/Write available for all process
+- **protected** Read available for all process but Write available only for owner process ****
+- **private** Read/Write only for owner process
+
+## Create table
+
+To create table use the following example:
+
+```elixir
+table = :ets.new(:my_table, [:set]) #Create a normal table
+#table = 8122
+```
+
+The number that this function return is the table name, to give a customizable name I need to add the :named_table  at the end
+
+```elixir
+table = :ets.new(:my_table, [:set, :named_table]) #Create a normal table 
+#table = my_table 
+```
+
+## Insert data
+
+When I want to insert I must use tuples where the first element is the key
+
+```elixir
+result :ets.insert({:fairy_tail, 10, 2}) # key = fairy_tail, value = 10,2
+```
+
+![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/0eaa5dd7-a96b-4906-8c7c-5a6d02069dfd/Untitled.png)
+
+When I store data has this structure, the key and the values
+
+## Get the table
+
+A form to get values is to get the complete table, is the most efficient way to get any data
+
+```elixir
+:ets.lookup(:fairy_tail) #This return the values asociated to this key 
+```
+
+## Delete specific element
+
+If I want to delete a specific element use the second argument to write which element deletes
+
+```elixir
+:ets.delete(":fairy_tail",2) #Delete the fairy tail element 2
+```
+
+## Delete element
+
+When I want to delete my complete using the function delete and just write the key
+
+```elixir
+:ets.delete(":fairy_tail") #Delete the fairy tail element
+```
+
+## Delete Table
+
+If I want to delete the entire table write the delete with no arguments
+
+```elixir
+:ets.delete() #Delete the talbe and process 
 ```
